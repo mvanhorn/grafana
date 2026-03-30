@@ -11,6 +11,7 @@ import {
 } from '@grafana/scenes';
 import { Page } from 'app/core/components/Page/Page';
 
+import { dashboardEditActions } from '../edit-pane/shared';
 import { type DashboardScene } from '../scene/DashboardScene';
 import { NavToolbarActions } from '../scene/NavToolbarActions';
 import { transformSceneToSaveModel } from '../serialization/transformSceneToSaveModel';
@@ -28,7 +29,6 @@ import {
   RESERVED_GLOBAL_VARIABLE_NAME_REGEX,
   WORD_CHARACTERS_REGEX,
   getVariableDefault,
-  getVariableScene,
   isVariableEditable,
 } from './variables/utils';
 
@@ -56,24 +56,6 @@ export class VariablesEditView extends SceneObjectBase<VariablesEditViewState> i
   private getVariableIndex = (identifier: string) => {
     const variables = this.getVariables();
     return variables.findIndex((variable) => variable.state.name === identifier);
-  };
-
-  private replaceEditVariable = (newVariable: SceneVariable) => {
-    // Find the index of the variable to be deleted
-    const variableIndex = this.state.editIndex ?? -1;
-    const { variables } = this.getVariableSet().state;
-    const variable = variables[variableIndex];
-
-    if (!variable) {
-      // Handle the case where the variable is not found
-      console.error('Variable not found');
-      return;
-    }
-
-    const updatedVariables = [...variables.slice(0, variableIndex), newVariable, ...variables.slice(variableIndex + 1)];
-
-    // Update the state or the variables array
-    this.getVariableSet().setState({ variables: updatedVariables });
   };
 
   public onDelete = (identifier: string) => {
@@ -179,9 +161,7 @@ export class VariablesEditView extends SceneObjectBase<VariablesEditViewState> i
       return;
     }
 
-    const { name, label } = variable.state;
-    const newVariable = getVariableScene(type, { name, label });
-    this.replaceEditVariable(newVariable);
+    dashboardEditActions.changeVariableType({ source: variable, newType: type });
   };
 
   public onGoBack = () => {
