@@ -385,6 +385,7 @@ build-targz: | bin/$(OS)/$(ARCH)/grafana public/build ## Build a tar.gz package 
 	BUILD_NUMBER="$(BUILD_NUMBER)" \
 	OS="$(OS)" \
 	ARCH="$(ARCH)" \
+	$(if $(ARM),GOARM="$(ARM)") \
 	GO="$(GO)" \
 	bash scripts/build-targz.sh
 
