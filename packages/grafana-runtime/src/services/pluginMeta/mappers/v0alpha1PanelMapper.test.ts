@@ -82,7 +82,7 @@ describe('v0alpha1PanelMapper', () => {
     it('should name angular property correctly', () => {
       const result = v0alpha1PanelMapper(v0alpha1Response);
 
-      expect(result[pluginId].angular).toEqual({});
+      expect(result[pluginId].angular).toEqual({ detected: false });
     });
 
     it('should name loadingStrategy property correctly', () => {
